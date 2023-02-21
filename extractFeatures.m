@@ -1,28 +1,44 @@
-function [Features] = extractFeatures(TimeseriesMatrix, method, windowsNum)
-    if method == 'WITHOUT_WIN_METHOD'
+function [Features] = extractFeatures(TimeseriesMatrix, method, nWindows)
+    if method == "WITHOUT_WIN_METHOD"
         Features = extractFeaturesWithoutWin(TimeseriesMatrix);
     end
 
-    %if method == 'CONTIGUOUS_WIN_METHOD'
+    nMeasurements = size(TimeseriesMatrix, 1);
 
-    %    Features = extractFeaturesWithWin
-    %end
+    if method == "CONTIGUOUS_WIN_METHOD"
+        windowSize = floor(nMeasurements / nWindows);
+        windowStep = windowSize;
+        Features = extractFeaturesWithWin(TimeseriesMatrix, nWindows, windowSize, windowStep);
+    end
 
-    %if method = 'OVERLAPPED_WIN_METHOD'
-    %    Features = extractFeaturesWithWin
-    %end 
+    if method == "OVERLAPPED_WIN_METHOD"
+        nContiguousWindows = ceil(nWindows / 2);
+        nWindows = nContiguousWindows * 2 - 1;
+        windowSize = floor(nMeasurements / nContiguousWindows);
+        windowStep = floor(windowSize / 2);
+        Features = extractFeaturesWithWin(TimeseriesMatrix, nWindows, windowSize, windowStep);
+    end 
 end
 
 function [Features] = extractFeaturesWithoutWin(TimeseriesMatrix)
     Features = computeFeatures(TimeseriesMatrix);
 end
 
-%function extractFeaturesWithWin(TimeseriesMatrix, windowsNum, )
+function [Features] = extractFeaturesWithWin(TimeseriesMatrix, nWindows, windowSize, windowStep)
+    N_FEATURE = 13;
+    nSignals = size(TimeseriesMatrix,2);
+    Features = zeros(1, nWindows * N_FEATURE * nSignals);    
+    for windowIndex = 1 :nWindows
+        windowStartIndex = (windowIndex - 1) * windowStep + 1;
+        windowEndIndex = windowStartIndex + windowSize - 1;
+        windowFeatures = computeFeatures(TimeseriesMatrix(windowStartIndex:windowEndIndex, :));
+        Features((windowIndex - 1) * N_FEATURE * nSignals + 1 : windowIndex * N_FEATURE * nSignals) = windowFeatures;
+    end
 
-%end
+end
 
 function [Features] = computeFeatures(TimeseriesMatrix)
-    % Computes 14 features from a given signal
+    % Computes 13 features from a given signal
 
     % Feature 1: Mean
     mean_signal = mean(TimeseriesMatrix);

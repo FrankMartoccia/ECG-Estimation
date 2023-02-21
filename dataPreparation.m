@@ -3,23 +3,23 @@ clear
 % CONSTANTS
 FOLDER_PATH = 'dataset';
 
-WITHOUT_WIN_METHOD = 'WITHOUT_WIN_METHOD';
-CONTIGUOUS_WIN_METHOD = 'CONTIGUOUS_WIN_METHOD';
-OVERLAPPED_WIN_METHOD = 'OVERLAPPED_WIN_METHOD';
+WITHOUT_WIN_METHOD = "WITHOUT_WIN_METHOD";
+CONTIGUOUS_WIN_METHOD = "CONTIGUOUS_WIN_METHOD";
+OVERLAPPED_WIN_METHOD = "OVERLAPPED_WIN_METHOD";
 
-FEATURE_NUM = 13;
-FEATURE_MATRIX_ROWS_NUM = 66; % n. of subjects * n. of activities
-FEATURE_MATRIX_COLUMNS_NUM = 11 * FEATURE_NUM; % n. of signals * n. of features
-CONTIGUOUS_WIN_NUM = 4; % n. of contiguous windows
-OVERLAPPED_WIN_NUM = 7; % n. of overlapped windows
+N_FEATURE = 13;
+N_FEATURE_MATRIX_ROWS = 66; % n. of subjects * n. of activities
+N_FEATURE_MATRIX_COLUMNS = 11 * N_FEATURE; % n. of signals * n. of features
+N_CONTIGUOUS_WIN_NUM = 4; % n. of contiguous windows
+N_OVERLAPPED_WIN_NUM = 7; % n. of overlapped windows
 
-FeaturesWithoutWin = zeros(FEATURE_MATRIX_ROWS_NUM, FEATURE_MATRIX_COLUMNS_NUM);
+FeaturesWithoutWin = zeros(N_FEATURE_MATRIX_ROWS, N_FEATURE_MATRIX_COLUMNS);
 
-FeaturesContiguousWin = zeros(FEATURE_MATRIX_ROWS_NUM,...
-    FEATURE_MATRIX_COLUMNS_NUM * CONTIGUOUS_WIN_NUM);
+FeaturesContiguousWin = zeros(N_FEATURE_MATRIX_ROWS,...
+    N_FEATURE_MATRIX_COLUMNS * N_CONTIGUOUS_WIN_NUM);
 
-FeaturesOverlappedWin = zeros(FEATURE_MATRIX_ROWS_NUM,...
-    FEATURE_MATRIX_COLUMNS_NUM * OVERLAPPED_WIN_NUM);
+FeaturesOverlappedWin = zeros(N_FEATURE_MATRIX_ROWS,...
+    N_FEATURE_MATRIX_COLUMNS * N_OVERLAPPED_WIN_NUM);
 
 
 FileList = dir(fullfile(FOLDER_PATH, '*.csv'));
@@ -44,7 +44,14 @@ for m = 1:length(FileList)
 
         % Feature extraction (without window)
         FeaturesWithoutWin(timeseriesCounter, :) = extractFeatures(TimeseriesMatrix, WITHOUT_WIN_METHOD); 
-
+        
+        % Feature extraction (with contiguous windows)
+        FeaturesContiguousWin(timeseriesCounter, :) = extractFeatures(TimeseriesMatrix,...
+            CONTIGUOUS_WIN_METHOD, N_CONTIGUOUS_WIN_NUM); 
+        
+        % Feature extraction (with overlapped windows)
+        FeaturesOverlappedWin(timeseriesCounter, :) = extractFeatures(TimeseriesMatrix,...
+            OVERLAPPED_WIN_METHOD, N_OVERLAPPED_WIN_NUM);         
 
 
     end
