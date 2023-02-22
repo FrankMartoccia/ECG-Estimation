@@ -82,10 +82,19 @@ save('data/BeforeNormalization', 'FeaturesWithoutWin', 'FeaturesContiguousWin', 
     'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
 
 
-function [normalizedFeatures] = normalizeFeatures(inputFeatures)
-    minValues = min(inputFeatures);
+function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
+    minValues = min(InputFeatures);
     
-    normalizedFeatures = (inputFeatures - minValues) ./ (max(inputFeatures) - minValues);
+    NormalizedFeatures = (InputFeatures - minValues) ./ (max(InputFeatures) - minValues);
 end
+
+function [Features] = deleteCorrelatedFeatures(InputFeatures)
+    CorrelationMatrix = corr(InputFeatures);
+    % find highly correlated features
+    CorrelatedFeatures = abs(triu(CorrelationMatrix, 1)) > 0.8;
+    % remove highly correlated features
+    Features = InputFeatures(:, all(~CorrelatedFeatures));
+end
+
 
 
