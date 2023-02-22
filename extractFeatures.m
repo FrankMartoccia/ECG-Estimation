@@ -25,14 +25,14 @@ function [Features] = extractFeaturesWithoutWin(TimeseriesMatrix)
 end
 
 function [Features] = extractFeaturesWithWin(TimeseriesMatrix, nWindows, windowSize, windowStep)
-    N_FEATURE = 13;
+    N_FEATURES = 13;
     nSignals = size(TimeseriesMatrix,2);
-    Features = zeros(1, nWindows * N_FEATURE * nSignals);    
+    Features = zeros(1, nWindows * N_FEATURES * nSignals);    
     for windowIndex = 1 :nWindows
         windowStartIndex = (windowIndex - 1) * windowStep + 1;
         windowEndIndex = windowStartIndex + windowSize - 1;
-        windowFeatures = computeFeatures(TimeseriesMatrix(windowStartIndex:windowEndIndex, :));
-        Features((windowIndex - 1) * N_FEATURE * nSignals + 1 : windowIndex * N_FEATURE * nSignals) = windowFeatures;
+        windowFeatures = computeFeatures(TimeseriesMatrix(windowStartIndex : windowEndIndex, :));
+        Features((windowIndex - 1) * N_FEATURES * nSignals + 1 : windowIndex * N_FEATURES * nSignals) = windowFeatures;
     end
 
 end

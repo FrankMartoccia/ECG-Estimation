@@ -7,19 +7,19 @@ WITHOUT_WIN_METHOD = "WITHOUT_WIN_METHOD";
 CONTIGUOUS_WIN_METHOD = "CONTIGUOUS_WIN_METHOD";
 OVERLAPPED_WIN_METHOD = "OVERLAPPED_WIN_METHOD";
 
-N_FEATURE = 13;
-N_FEATURE_MATRIX_ROWS = 66; % n. of subjects * n. of activities
-N_FEATURE_MATRIX_COLUMNS = 11 * N_FEATURE; % n. of signals * n. of features
+N_FEATURES = 13;
+N_FEATURES_MATRIX_ROWS = 66; % n. of subjects * n. of activities
+N_FEATURES_MATRIX_COLUMNS = 11 * N_FEATURES; % n. of signals * n. of features
 N_CONTIGUOUS_WIN_NUM = 4; % n. of contiguous windows
 N_OVERLAPPED_WIN_NUM = 7; % n. of overlapped windows
 
-FeaturesWithoutWin = zeros(N_FEATURE_MATRIX_ROWS, N_FEATURE_MATRIX_COLUMNS);
+FeaturesWithoutWin = zeros(N_FEATURES_MATRIX_ROWS, N_FEATURES_MATRIX_COLUMNS);
 
-FeaturesContiguousWin = zeros(N_FEATURE_MATRIX_ROWS,...
-    N_FEATURE_MATRIX_COLUMNS * N_CONTIGUOUS_WIN_NUM);
+FeaturesContiguousWin = zeros(N_FEATURES_MATRIX_ROWS,...
+    N_FEATURES_MATRIX_COLUMNS * N_CONTIGUOUS_WIN_NUM);
 
-FeaturesOverlappedWin = zeros(N_FEATURE_MATRIX_ROWS,...
-    N_FEATURE_MATRIX_COLUMNS * N_OVERLAPPED_WIN_NUM);
+FeaturesOverlappedWin = zeros(N_FEATURES_MATRIX_ROWS,...
+    N_FEATURES_MATRIX_COLUMNS * N_OVERLAPPED_WIN_NUM);
 
 
 FileList = dir(fullfile(FOLDER_PATH, '*.csv'));
@@ -35,11 +35,11 @@ for m = 1:length(FileList)
         TimeseriesTable = readtable(fullfile(FOLDER_PATH, fileName), 'Range', 'B:L');
         TimeseriesMatrix = table2array(TimeseriesTable);
         
-        % Remove outliers
+        % Check outliers
         if (max(isoutlier(TimeseriesMatrix)) == 1) 
             disp('Outlier detected')
         end
-        
+        % Remove outliers
         TimeseriesMatrix = filloutliers(TimeseriesMatrix, 'linear');
 
         % Feature extraction (without window)
