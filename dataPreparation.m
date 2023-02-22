@@ -68,15 +68,24 @@ for m = 1:length(FileList)
         TargetStdECG(targetCounter, 1) = std(TargetECG);
         
         if contains(fileName, "run")
-            disp('run')
             TargetActivity(targetCounter, 1) = 1;
         elseif contains(fileName, "sit")
-            disp('sit')
             TargetActivity(targetCounter, 1) = 2;
         else
-            disp('walk')
             TargetActivity(targetCounter, 1) = 3;
         end
     end
     
 end
+
+save('data/BeforeNormalization', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
+    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
+
+
+function [normalizedFeatures] = normalizeFeatures(inputFeatures)
+    minValues = min(inputFeatures);
+    
+    normalizedFeatures = (inputFeatures - minValues) ./ (max(inputFeatures) - minValues);
+end
+
+
