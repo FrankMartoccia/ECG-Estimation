@@ -21,10 +21,17 @@ FeaturesContiguousWin = zeros(N_FEATURES_MATRIX_ROWS,...
 FeaturesOverlappedWin = zeros(N_FEATURES_MATRIX_ROWS,...
     N_FEATURES_MATRIX_COLUMNS * N_OVERLAPPED_WIN_NUM);
 
+TargetMeanECG = zeros(N_FEATURES_MATRIX_ROWS, 1);
+
+TargetStdECG = zeros(N_FEATURES_MATRIX_ROWS, 1);
+
+TargetActivity = zeros(N_FEATURES_MATRIX_ROWS, 1);
+
 
 FileList = dir(fullfile(FOLDER_PATH, '*.csv'));
 
 timeseriesCounter = 0;
+targetCounter = 0;
 
 for m = 1:length(FileList)
     fileName = FileList(m).name;
@@ -53,7 +60,23 @@ for m = 1:length(FileList)
         FeaturesOverlappedWin(timeseriesCounter, :) = extractFeatures(TimeseriesMatrix,...
             OVERLAPPED_WIN_METHOD, N_OVERLAPPED_WIN_NUM);         
 
-
+    else
+        targetCounter = targetCounter + 1;
+        TargetTable = readtable(fullfile(FOLDER_PATH, fileName), 'Range', 'B:B');
+        TargetECG = table2array(TargetTable);
+        TargetMeanECG(targetCounter, 1) = mean(TargetECG);
+        TargetStdECG(targetCounter, 1) = std(TargetECG);
+        
+        if contains(fileName, "run")
+            disp('run')
+            TargetActivity(targetCounter, 1) = 1;
+        elseif contains(fileName, "sit")
+            disp('sit')
+            TargetActivity(targetCounter, 1) = 2;
+        else
+            disp('walk')
+            TargetActivity(targetCounter, 1) = 3;
+        end
     end
     
 end
