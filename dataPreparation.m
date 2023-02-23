@@ -12,6 +12,7 @@ N_FEATURES_MATRIX_ROWS = 66; % n. of subjects * n. of activities
 N_FEATURES_MATRIX_COLUMNS = 11 * N_FEATURES; % n. of signals * n. of features
 N_CONTIGUOUS_WIN_NUM = 4; % n. of contiguous windows
 N_OVERLAPPED_WIN_NUM = 7; % n. of overlapped windows
+N_AUGMENTATIONS = 50;
 
 FeaturesWithoutWin = zeros(N_FEATURES_MATRIX_ROWS, N_FEATURES_MATRIX_COLUMNS);
 
@@ -25,8 +26,7 @@ TargetMeanECG = zeros(N_FEATURES_MATRIX_ROWS, 1);
 
 TargetStdECG = zeros(N_FEATURES_MATRIX_ROWS, 1);
 
-TargetActivity = zeros(N_FEATURES_MATRIX_ROWS, 1);
-
+TargetActivity = zeros(N_FEATURES_MATRIX_ROWS, 3);
 
 FileList = dir(fullfile(FOLDER_PATH, '*.csv'));
 
@@ -38,7 +38,7 @@ for m = 1:length(FileList)
     
     if (contains(fileName, 'timeseries'))
         timeseriesCounter = timeseriesCounter + 1;
-        disp(timeseriesCounter);
+        disp(['Timeseries nr. ' num2str(timeseriesCounter)]);
         TimeseriesTable = readtable(fullfile(FOLDER_PATH, fileName), 'Range', 'B:L');
         TimeseriesMatrix = table2array(TimeseriesTable);
         
@@ -68,17 +68,43 @@ for m = 1:length(FileList)
         TargetStdECG(targetCounter, 1) = std(TargetECG);
         
         if contains(fileName, "run")
-            TargetActivity(targetCounter, 1) = 1;
+            TargetActivity(targetCounter, :) = [1, 0, 0];
         elseif contains(fileName, "sit")
-            TargetActivity(targetCounter, 1) = 2;
+            TargetActivity(targetCounter, :) = [0, 1, 0];
         else
-            TargetActivity(targetCounter, 1) = 3;
+            TargetActivity(targetCounter, :) = [0, 0, 1];
         end
     end
     
 end
 
-save('data/BeforeNormalization', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
+save('data/beforeNormalization', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
+    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
+
+FeaturesWithoutWin = normalizeFeatures(FeaturesWithoutWin);
+FeaturesWithoutWin = deleteCorrelatedFeatures(FeaturesWithoutWin);
+
+FeaturesContiguousWin = normalizeFeatures(FeaturesContiguousWin);
+FeaturesContiguousWin = deleteCorrelatedFeatures(FeaturesContiguousWin);
+
+FeaturesOverlappedWin = normalizeFeatures(FeaturesOverlappedWin);
+FeaturesOverlappedWin = deleteCorrelatedFeatures(FeaturesOverlappedWin);
+
+save('data/afterNormalization', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
+    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
+
+FeaturesWithoutWin = normalizeFeatures(dataAugmentation(N_FEATURES_MATRIX_ROWS,...
+ N_AUGMENTATIONS, FeaturesWithoutWin));
+FeaturesContiguousWin = normalizeFeatures(dataAugmentation(N_FEATURES_MATRIX_ROWS,...
+ N_AUGMENTATIONS, FeaturesContiguousWin));
+FeaturesOverlappedWin = normalizeFeatures(dataAugmentation(N_FEATURES_MATRIX_ROWS,...
+ N_AUGMENTATIONS, FeaturesOverlappedWin));
+
+TargetMeanECG = repelem(TargetMeanECG, N_AUGMENTATIONS, 1);
+TargetStdECG = repelem(TargetStdECG, N_AUGMENTATIONS, 1);
+TargetActivity = repelem(TargetActivity, N_AUGMENTATIONS, 1);
+
+save('data/afterDataAugmentation', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
     'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
 
 
@@ -91,10 +117,7 @@ end
 function [Features] = deleteCorrelatedFeatures(InputFeatures)
     CorrelationMatrix = corr(InputFeatures);
     % find highly correlated features
-    CorrelatedFeatures = abs(triu(CorrelationMatrix, 1)) > 0.8;
+    CorrelatedFeatures = abs(triu(CorrelationMatrix, 1)) > 0.9;
     % remove highly correlated features
     Features = InputFeatures(:, all(~CorrelatedFeatures));
 end
-
-
-
