@@ -13,6 +13,7 @@ N_FEATURES_MATRIX_COLUMNS = 11 * N_FEATURES; % n. of signals * n. of features
 N_CONTIGUOUS_WIN_NUM = 4; % n. of contiguous windows
 N_OVERLAPPED_WIN_NUM = 7; % n. of overlapped windows
 N_AUGMENTATIONS = 50;
+N_SELECTED_FEATURES = 10;
 
 FeaturesWithoutWin = zeros(N_FEATURES_MATRIX_ROWS, N_FEATURES_MATRIX_COLUMNS);
 
@@ -105,7 +106,14 @@ TargetStdECG = repelem(TargetStdECG, N_AUGMENTATIONS + 1, 1);
 TargetActivity = repelem(TargetActivity, N_AUGMENTATIONS + 1, 1);
 
 save('data/afterDataAugmentation', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
-    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
+    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');clc
+
+opt = statset('Display', 'iter','UseParallel',true);
+
+selectedFeatures = sequentialfs(@selectionCriterion, FeaturesWithoutWin, TargetMeanECG, ...
+    'options', opt, 'nfeatures', 10);
+
+saveBestFeatures('MeanWithoutWin', selectedFeatures);
 
 
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
@@ -120,4 +128,10 @@ function [Features] = deleteCorrelatedFeatures(InputFeatures)
     CorrelatedFeatures = abs(triu(CorrelationMatrix, 1)) > 0.9;
     % remove highly correlated features
     Features = InputFeatures(:, all(~CorrelatedFeatures));
+end
+
+function saveBestFeatures(fileName, selectedFeatures)
+    filePath = fopen(strcat('results/dataPreparation/sf', fileName, '.txt'), 'w');
+    fprintf(filePath,'%s\n', num2str(find(selectedFeatures)));
+    fclose(filePath);
 end
