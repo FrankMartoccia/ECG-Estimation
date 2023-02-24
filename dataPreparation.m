@@ -100,9 +100,9 @@ FeaturesContiguousWin = normalizeFeatures(dataAugmentation(N_FEATURES_MATRIX_ROW
 FeaturesOverlappedWin = normalizeFeatures(dataAugmentation(N_FEATURES_MATRIX_ROWS,...
  N_AUGMENTATIONS, FeaturesOverlappedWin));
 
-TargetMeanECG = repelem(TargetMeanECG, N_AUGMENTATIONS, 1);
-TargetStdECG = repelem(TargetStdECG, N_AUGMENTATIONS, 1);
-TargetActivity = repelem(TargetActivity, N_AUGMENTATIONS, 1);
+TargetMeanECG = repelem(TargetMeanECG, N_AUGMENTATIONS + 1, 1);
+TargetStdECG = repelem(TargetStdECG, N_AUGMENTATIONS + 1, 1);
+TargetActivity = repelem(TargetActivity, N_AUGMENTATIONS + 1, 1);
 
 save('data/afterDataAugmentation', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
     'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
