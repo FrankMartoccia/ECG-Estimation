@@ -3,7 +3,7 @@ function netPerformance = selectionCriterion (FeaturesTraining, TargetTraining, 
     net.divideParam.trainRatio = 1;
     net.divideParam.valRatio = 0;
     net.divideParam.testRatio = 0;
-    net.trainParam.showWindow = 1;
+    net.trainParam.showWindow = 0;
     
     net = train(net, FeaturesTraining', TargetTraining');
     
