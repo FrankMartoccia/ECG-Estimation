@@ -109,37 +109,31 @@ TargetStdECG = repelem(TargetStdECG, N_AUGMENTATIONS + 1, 1);
 TargetActivity = repelem(TargetActivity, N_AUGMENTATIONS + 1, 1);
 
 save('data/afterDataAugmentation', 'FeaturesWithoutWin', 'FeaturesContiguousWin', ...
-    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');clc
+    'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
 
 % Feature selection options
 opt = statset('Display', 'iter','UseParallel',true);
 
 % Running feature selection and saving results on file (no windows)
-sfMeanWithoutWin = sequentialfs(@selectionCriterion, FeaturesWithoutWin, TargetMeanECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('MeanWithoutWin', sfMeanWithoutWin);
+% Mean
+selectFeatures(FeaturesWithoutWin, TargetMeanECG, 'MeanWithoutWin');
 
-sfStdWithoutWin = sequentialfs(@selectionCriterion, FeaturesWithoutWin, TargetStdECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('StdWithoutWin', sfStdWithoutWin);
+% Std
+selectFeatures(FeaturesWithoutWin, TargetStdECG, 'StdWithoutWin');
 
 % Running feature selection and saving results on file (contiguous windows)
-sfMeanContiguousWin = sequentialfs(@selectionCriterion, FeaturesContiguousWin, TargetMeanECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('MeanContiguousWin', sfMeanContiguousWin);
+% Mean
+selectFeatures(FeaturesContiguousWin, TargetMeanECG, 'MeanContiguousWin');
 
-sfStdContiguousWin = sequentialfs(@selectionCriterion, FeaturesContiguousWin, TargetStdECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('StdContiguousWin', sfStdContiguousWin);
+% Std
+selectFeatures(FeaturesContiguousWin, TargetStdECG, 'StdContiguousWin');
 
 % Running feature selection and saving results on file (overlapped windows)
-sfMeanOverlappedWin = sequentialfs(@selectionCriterion, FeaturesOverlappedWin, TargetMeanECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('MeanOverlappedWin', selectedFeatures);
+% Mean
+selectFeatures(FeaturesOverlappedWin, TargetMeanECG, 'MeanOverlappedWin');
 
-sfStdOverlappedWin = sequentialfs(@selectionCriterion, FeaturesOverlappedWin, TargetStdECG, ...
-    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
-saveBestFeatures('StdOverlappedWin', sfStdOverlappedWin);
+% Std
+selectFeatures(FeaturesOverlappedWin, TargetStdECG, 'StdOverlappedWin');
 
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
     minValues = min(InputFeatures);
@@ -155,8 +149,9 @@ function [Features] = deleteCorrelatedFeatures(InputFeatures)
     Features = InputFeatures(:, all(~CorrelatedFeatures));
 end
 
-function saveBestFeatures(fileName, selectedFeatures)
-    filePath = fopen(strcat('results/dataPreparation/sf', fileName, '.txt'), 'w');
-    fprintf(filePath,'%s\n', num2str(find(selectedFeatures)));
-    fclose(filePath);
+function selectFeatures(Features, Target, options, fileName)
+    diary(strcat('results/dataPreparation/sf', fileName, '.txt'));
+    sequentialfs(@selectionCriterion, Features, Target, ...
+    'options', options, 'nfeatures', N_SELECTED_FEATURES);
+    diary('off');
 end
