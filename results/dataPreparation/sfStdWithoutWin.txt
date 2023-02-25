@@ -1,0 +1,11 @@
+Step 1, added column 41, criterion value 4491.53
+Step 2, added column 33, criterion value 3690.14
+Step 3, added column 48, criterion value 2802.3
+Step 4, added column 67, criterion value 1911.74
+Step 5, added column 52, criterion value 1570.7
+Step 6, added column 58, criterion value 1235.02
+Step 7, added column 57, criterion value 1074.95
+Step 8, added column 47, criterion value 889.433
+Step 9, added column 15, criterion value 774.568
+Step 10, added column 46, criterion value 668.709
+Final columns included:  15 33 41 46 47 48 52 57 58 67
