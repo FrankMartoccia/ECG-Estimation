@@ -117,30 +117,28 @@ opt = statset('Display', 'iter','UseParallel',true);
 % Running feature selection and saving results on file (no windows)
 % Mean
 selectFeatures(FeaturesWithoutWin, TargetMeanECG, 'MeanWithoutWin');
-
 % Std
 selectFeatures(FeaturesWithoutWin, TargetStdECG, 'StdWithoutWin');
 
 % Running feature selection and saving results on file (contiguous windows)
 % Mean
 selectFeatures(FeaturesContiguousWin, TargetMeanECG, 'MeanContiguousWin');
-
 % Std
 selectFeatures(FeaturesContiguousWin, TargetStdECG, 'StdContiguousWin');
 
 % Running feature selection and saving results on file (overlapped windows)
 % Mean
 selectFeatures(FeaturesOverlappedWin, TargetMeanECG, 'MeanOverlappedWin');
-
 % Std
 selectFeatures(FeaturesOverlappedWin, TargetStdECG, 'StdOverlappedWin');
 
+% Normalization of the features values in [0, 1] (Min-max normalization)
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
     minValues = min(InputFeatures);
-    
     NormalizedFeatures = (InputFeatures - minValues) ./ (max(InputFeatures) - minValues);
 end
 
+% Removal of all features with correlation above the specified threshold
 function [Features] = deleteCorrelatedFeatures(InputFeatures)
     CorrelationMatrix = corr(InputFeatures);
     % find highly correlated features
@@ -149,9 +147,19 @@ function [Features] = deleteCorrelatedFeatures(InputFeatures)
     Features = InputFeatures(:, all(~CorrelatedFeatures));
 end
 
+% Run feature selection and save the results
 function selectFeatures(Features, Target, options, fileName)
-    diary(strcat('results/dataPreparation/sf', fileName, '.txt'));
-    sequentialfs(@selectionCriterion, Features, Target, ...
+    filePath = (strcat('results/dataPreparation/sf', fileName));
+    diary(strcat(filePath, 'Log.txt'));
+    selectedFeatures = sequentialfs(@selectionCriterion, Features, Target, ...
     'options', options, 'nfeatures', N_SELECTED_FEATURES);
     diary('off');
+    saveBestFeatures(fileName, selectedFeatures);
+end
+
+% Save the values of the selected features columns
+function saveBestFeatures(filePath, selectedFeatures)
+    filePath = fopen(strcat(filePath, 'Columns.txt'), 'w');
+    fprintf(filePath,'%s\n', num2str(find(selectedFeatures)));
+    fclose(filePath);
 end
