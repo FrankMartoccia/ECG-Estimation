@@ -112,25 +112,25 @@ save('data/afterDataAugmentation', 'FeaturesWithoutWin', 'FeaturesContiguousWin'
     'FeaturesOverlappedWin', 'TargetMeanECG', 'TargetStdECG', 'TargetActivity');
 
 % Feature selection options
-opt = statset('Display', 'iter','UseParallel',true);
+options = statset('Display', 'iter','UseParallel',true);
 
 % Running feature selection and saving results on file (no windows)
 % Mean
-selectFeatures(FeaturesWithoutWin, TargetMeanECG, 'MeanWithoutWin');
+selectFeatures(FeaturesWithoutWin, TargetMeanECG, options, 'MeanWithoutWin', N_SELECTED_FEATURES);
 % Std
-selectFeatures(FeaturesWithoutWin, TargetStdECG, 'StdWithoutWin');
+% selectFeatures(FeaturesWithoutWin, TargetStdECG, options, 'StdWithoutWin', N_SELECTED_FEATURES);
 
 % Running feature selection and saving results on file (contiguous windows)
 % Mean
-selectFeatures(FeaturesContiguousWin, TargetMeanECG, 'MeanContiguousWin');
+% selectFeatures(FeaturesContiguousWin, TargetMeanECG, options, 'MeanContiguousWin', N_SELECTED_FEATURES);
 % Std
-selectFeatures(FeaturesContiguousWin, TargetStdECG, 'StdContiguousWin');
+% selectFeatures(FeaturesContiguousWin, TargetStdECG, options, 'StdContiguousWin', N_SELECTED_FEATURES);
 
 % Running feature selection and saving results on file (overlapped windows)
 % Mean
-selectFeatures(FeaturesOverlappedWin, TargetMeanECG, 'MeanOverlappedWin');
+% selectFeatures(FeaturesOverlappedWin, TargetMeanECG, options, 'MeanOverlappedWin', N_SELECTED_FEATURES);
 % Std
-selectFeatures(FeaturesOverlappedWin, TargetStdECG, 'StdOverlappedWin');
+% selectFeatures(FeaturesOverlappedWin, TargetStdECG, options, 'StdOverlappedWin', N_SELECTED_FEATURES);
 
 % Normalization of the features values in [0, 1] (Min-max normalization)
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
@@ -148,11 +148,11 @@ function [Features] = deleteCorrelatedFeatures(InputFeatures)
 end
 
 % Run feature selection and save the results
-function selectFeatures(Features, Target, options, fileName)
+function selectFeatures(Features, Target, options, fileName, nFeatures)
     filePath = (strcat('results/dataPreparation/sf', fileName));
     diary(strcat(filePath, 'Log.txt'));
     selectedFeatures = sequentialfs(@selectionCriterion, Features, Target, ...
-    'options', options, 'nfeatures', N_SELECTED_FEATURES);
+    'options', options, 'nfeatures', nFeatures);
     diary('off');
     saveBestFeatures(fileName, selectedFeatures);
 end

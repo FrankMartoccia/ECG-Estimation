@@ -1,0 +1,3 @@
+Start forward sequential feature selection:
+Initial columns included:  none
+Columns that can not be included:  none
