@@ -1,0 +1,23 @@
+    selectedFeatures = sequentialfs(@selectionCriterion, FeaturesContiguousWin, TargetMeanECG, ...
+    'options', options, 'nfeatures', N_SELECTED_FEATURES);
+{Unrecognized function or variable 'options'.
+} 
+  filePath = (strcat('results/dataPreparation/sf', 'MeanContiguousWin'));
+    diary(strcat(filePath, 'Log.txt'));
+    selectedFeatures = sequentialfs(@selectionCriterion, FeaturesContiguousWin, TargetMeanECG, ...
+    'options', opt, 'nfeatures', N_SELECTED_FEATURES);
+Start forward sequential feature selection:
+Initial columns included:  none
+Columns that can not be included:  none
+Step 1, added column 105, criterion value 12.7915
+Step 2, added column 50, criterion value 9.60511
+Step 3, added column 52, criterion value 7.36227
+Step 4, added column 35, criterion value 5.4301
+Step 5, added column 96, criterion value 4.35719
+Step 6, added column 82, criterion value 3.59881
+Step 7, added column 175, criterion value 3.05656
+Step 8, added column 13, criterion value 2.65885
+Step 9, added column 180, criterion value 2.28636
+Step 10, added column 184, criterion value 1.95269
+Final columns included:  13 35 50 52 82 96 105 175 180 184 
+    diary('off');
