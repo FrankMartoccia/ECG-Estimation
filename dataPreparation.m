@@ -118,19 +118,19 @@ options = statset('Display', 'iter','UseParallel',true);
 % Mean
 selectFeatures(FeaturesWithoutWin, TargetMeanECG, options, 'MeanWithoutWin', N_SELECTED_FEATURES);
 % Std
-% selectFeatures(FeaturesWithoutWin, TargetStdECG, options, 'StdWithoutWin', N_SELECTED_FEATURES);
+selectFeatures(FeaturesWithoutWin, TargetStdECG, options, 'StdWithoutWin', N_SELECTED_FEATURES);
 
 % Running feature selection and saving results on file (contiguous windows)
 % Mean
-% selectFeatures(FeaturesContiguousWin, TargetMeanECG, options, 'MeanContiguousWin', N_SELECTED_FEATURES);
+selectFeatures(FeaturesContiguousWin, TargetMeanECG, options, 'MeanContiguousWin', N_SELECTED_FEATURES);
 % Std
-% selectFeatures(FeaturesContiguousWin, TargetStdECG, options, 'StdContiguousWin', N_SELECTED_FEATURES);
+selectFeatures(FeaturesContiguousWin, TargetStdECG, options, 'StdContiguousWin', N_SELECTED_FEATURES);
 
 % Running feature selection and saving results on file (overlapped windows)
 % Mean
-% selectFeatures(FeaturesOverlappedWin, TargetMeanECG, options, 'MeanOverlappedWin', N_SELECTED_FEATURES);
+selectFeatures(FeaturesOverlappedWin, TargetMeanECG, options, 'MeanOverlappedWin', N_SELECTED_FEATURES);
 % Std
-% selectFeatures(FeaturesOverlappedWin, TargetStdECG, options, 'StdOverlappedWin', N_SELECTED_FEATURES);
+selectFeatures(FeaturesOverlappedWin, TargetStdECG, options, 'StdOverlappedWin', N_SELECTED_FEATURES);
 
 % Normalization of the features values in [0, 1] (Min-max normalization)
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
