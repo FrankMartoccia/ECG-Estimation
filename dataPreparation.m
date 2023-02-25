@@ -154,7 +154,7 @@ function selectFeatures(Features, Target, options, fileName)
     selectedFeatures = sequentialfs(@selectionCriterion, Features, Target, ...
     'options', options, 'nfeatures', N_SELECTED_FEATURES);
     diary('off');
-    saveBestFeatures(fileName, selectedFeatures);
+    saveBestFeatures(filePath, selectedFeatures);
 end
 
 % Save the values of the selected features columns

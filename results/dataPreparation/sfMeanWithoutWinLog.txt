@@ -1,0 +1,11 @@
+Step 1, added column 45, criterion value 13.1306
+Step 2, added column 64, criterion value 10.6408
+Step 3, added column 43, criterion value 7.87158
+Step 4, added column 37, criterion value 5.85108
+Step 5, added column 15, criterion value 4.5921
+Step 6, added column 51, criterion value 3.78996
+Step 7, added column 57, criterion value 3.19104
+Step 8, added column 48, criterion value 2.64723
+Step 9, added column 33, criterion value 2.48185
+Step 10, added column 67, criterion value 2.17873
+Final columns included:  15 33 37 43 45 48 51 57 64 67 
