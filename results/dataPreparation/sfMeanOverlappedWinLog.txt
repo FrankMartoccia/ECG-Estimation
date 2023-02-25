@@ -1,3 +1,6 @@
+Start forward sequential feature selection:
+Initial columns included:  none
+Columns that can not be included:  none
 Step 1, added column 155, criterion value 12.8285
 Step 2, added column 20, criterion value 10.2635
 Step 3, added column 223, criterion value 7.42804
