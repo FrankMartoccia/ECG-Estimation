@@ -1,0 +1,17 @@
+    selectedFeatures = sequentialfs(@selectionCriterion, FeaturesContiguousWin, TargetStdECG, ...
+    'options', options, 'nfeatures', N_SELECTED_FEATURES);
+Start forward sequential feature selection:
+Initial columns included:  none
+Columns that can not be included:  none
+Step 1, added column 180, criterion value 4256.35
+Step 2, added column 150, criterion value 3248.37
+Step 3, added column 13, criterion value 2389.44
+Step 4, added column 189, criterion value 1851.63
+Step 5, added column 56, criterion value 1469.27
+Step 6, added column 115, criterion value 1235.27
+Step 7, added column 82, criterion value 1062.92
+Step 8, added column 111, criterion value 898.592
+Step 9, added column 171, criterion value 700.78
+Step 10, added column 113, criterion value 625.707
+Final columns included:  13 56 82 111 113 115 150 171 180 189 
+    diary('off');
