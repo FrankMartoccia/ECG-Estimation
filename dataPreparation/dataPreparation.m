@@ -132,6 +132,24 @@ selectFeatures(FeaturesOverlappedWin, TargetMeanECG, options, 'MeanOverlappedWin
 % Std
 selectFeatures(FeaturesOverlappedWin, TargetStdECG, options, 'StdOverlappedWin', N_SELECTED_FEATURES);
 
+% The best results were obtained by extracting features without windows
+% Extraction of the best features columns from file
+BestFeaturesMeanECG = importdata('results/dataPreparation/sfMeanWithoutWinColumns.txt', ' ');
+BestFeaturesStdECG = importdata('results/dataPreparation/sfStdWithoutWinColumns.txt', ' ');
+BestFeaturesUnion = unique(sort([BestFeaturesMeanECG; BestFeaturesStdECG]));
+
+% Creation of input matrices with only the best features
+InputMeanECG = FeaturesWithoutWin(:, BestFeaturesMeanECG)';
+InputStdECG = FeaturesWithoutWin(:, BestFeaturesStdECG)';
+% Creation of target matrices
+TargetMeanECG = TargetMeanECG';
+TargetStdECG = TargetStdECG';
+
+% Creation of input matrices and vectors for activity recognition
+InputActivity = FeaturesWithoutWin(:, BestFeaturesUnion)';
+TargetActivityClasses = vec2ind(TargetActivity');
+TargetActivityClassesVec = TargetActivity';
+
 % Normalization of the features values in [0, 1] (Min-max normalization)
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
     minValues = min(InputFeatures);
