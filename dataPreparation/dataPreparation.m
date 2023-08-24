@@ -150,6 +150,9 @@ InputActivity = FeaturesWithoutWin(:, BestFeaturesUnion)';
 TargetActivityClasses = vec2ind(TargetActivity');
 TargetActivityClassesVec = TargetActivity';
 
+save('data/afterFeaturesSelection', 'InputMeanECG', 'InputStdECG', 'TargetMeanECG', ...
+    'TargetStdECG', 'InputActivity', 'TargetActivityClasses', 'TargetActivityClassesVec');
+
 % Normalization of the features values in [0, 1] (Min-max normalization)
 function [NormalizedFeatures] = normalizeFeatures(InputFeatures)
     minValues = min(InputFeatures);
