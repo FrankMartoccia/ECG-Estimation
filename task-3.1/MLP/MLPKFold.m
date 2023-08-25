@@ -30,10 +30,10 @@ for i = 1:length(trainFunctions)
         trainIdx = cv.training(fold);
         testIdx = cv.test(fold);
         
-        trainData = InputMeanECG(trainIdx, :);
-        trainTarget = TargetMeanECG(trainIdx, :);
-        testData = InputMeanECG(testIdx, :);
-        testTarget = TargetMeanECG(testIdx, :);
+        trainData = InputMeanECG(:, trainIdx);
+        trainTarget = TargetMeanECG(:, trainIdx);
+        testData = InputMeanECG(:, testIdx);
+        testTarget = TargetMeanECG(:, testIdx);
         
         % Network creation
         net = fitnet(hiddenSizes, trainFcn);
@@ -42,10 +42,10 @@ for i = 1:length(trainFunctions)
         net.divideParam.testRatio = 0.2;
         net.performFcn = 'mse'; 
         
-        [net, tr] = train(net, trainData', trainTarget');
+        [net, tr] = train(net, trainData, trainTarget);
         
         % Evaluate performance on test data
-        y = net(testData');
+        y = net(testData);
         mse = perform(net, testTarget', y);
         totalMSE = totalMSE + mse;
     end
@@ -64,4 +64,3 @@ xticks(1:length(trainFunctions));
 xticklabels(trainFunctions);
 ylabel('Average MSE');
 title('Comparison of Training Algorithms');
-
