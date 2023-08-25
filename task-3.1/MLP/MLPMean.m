@@ -7,10 +7,7 @@ load("data/afterFeaturesSelection.mat");
 
 % Network parameters
 hiddenSizes = 60;
-
-% 'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg', 'traincgb',
-% 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingd'	
-trainFcn = 'trainbfg';
+trainFcn = 'trainbr';
 
 % Network creation
 net = fitnet(hiddenSizes, trainFcn);
