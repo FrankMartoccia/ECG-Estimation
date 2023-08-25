@@ -7,12 +7,12 @@ load("data/afterFeaturesSelection.mat");
 
 % Network parameters
 hiddenSizes = 65;
-trainFcn = 'traingd';
+trainFcn = 'trainbr';
 
 % Network creation
 net = fitnet(hiddenSizes, trainFcn);
-net.divideParam.trainRatio = 0.7;
-net.divideParam.valRatio = 0.1;
+net.divideParam.trainRatio = 0.8;
+net.divideParam.valRatio = 0;
 net.divideParam.testRatio = 0.2;
 net.performFcn = 'mse'; 
 
