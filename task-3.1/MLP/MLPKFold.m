@@ -8,7 +8,9 @@ load("data/afterFeaturesSelection.mat");
 hiddenSizes = 60;
 
 % List of training functions to test
-trainFunctions = {'trainlm', 'trainrp', 'trainscg'};
+
+trainFunctions = {'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg',...
+   'traincgb', 'traincgf', 'traincgp', 'trainoss'};
 
 % Initialize arrays to store performance results
 mseResults = zeros(length(trainFunctions), 1);
@@ -46,7 +48,7 @@ for i = 1:length(trainFunctions)
         
         % Evaluate performance on test data
         y = net(testData);
-        mse = perform(net, testTarget', y);
+        mse = perform(net, testTarget, y);
         totalMSE = totalMSE + mse;
     end
     
