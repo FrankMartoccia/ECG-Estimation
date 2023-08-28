@@ -14,7 +14,7 @@ net = fitnet(hiddenSizes, trainFcn);
 net.divideParam.trainRatio = 0.8;
 net.divideParam.valRatio = 0;
 net.divideParam.testRatio = 0.2;
-net.performFcn = 'mse'; 
+% performFcn = 'mse' (by default)
 
 [net,tr] = train(net, InputStdECG, TargetStdECG);
 
