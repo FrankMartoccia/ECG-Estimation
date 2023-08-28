@@ -17,7 +17,7 @@ goal = 0.0;
 spread = 0.3;
 MN = 300; % Maximum number of neurons
 
-% Creation radial basis network
+% Radial basis network creation
 net = newrb(P, T, goal, spread, MN);
 y = net(InputMeanECG);
 

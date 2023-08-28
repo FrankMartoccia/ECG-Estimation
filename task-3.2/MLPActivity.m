@@ -11,8 +11,9 @@ trainFcn = 'trainbr'; % Tested trainbr, trainlm and trainrp
 
 % Network creation
 net = patternnet(hiddenSizes, trainFcn);
-net.divideParam.trainRatio = 0.8;
-net.divideParam.valRatio = 0.0;
+net.divideParam.trainRatio = 0.8; % It was set to 0.7 for trainlm and trainrp
+% trainbr doesn't need a validation set
+net.divideParam.valRatio = 0.0; % It was set to 0.1 for trainlm and trainrp
 net.divideParam.testRatio = 0.2;
 net.performFcn = 'mse';
 % performFcn = 'crossentropy' (by default)
