@@ -6,7 +6,7 @@ clc
 load("data/afterFeaturesSelection.mat");
 
 % Network parameters
-hiddenSizes = 10; 
+hiddenSizes = 10; % Tested with 7,8,9,10 neurons
 trainFcn = 'trainbr'; % Tested trainbr, trainlm and trainrp
 
 % Network creation
