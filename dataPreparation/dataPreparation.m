@@ -173,7 +173,7 @@ function selectFeatures(Features, Target, options, fileName, nFeatures)
     filePath = (strcat('results/dataPreparation/sf', fileName));
     diary(strcat(filePath, 'Log.txt'));
     selectedFeatures = sequentialfs(@selectionCriterion, Features, Target, ...
-    'options', options, 'nfeatures', nFeatures);
+        'options', options, 'nfeatures', nFeatures);
     diary('off');
     saveBestFeatures(filePath, selectedFeatures);
 end
