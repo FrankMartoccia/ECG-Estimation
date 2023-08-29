@@ -13,7 +13,7 @@ selectedFeatures = selectFeatures(InputActivity, TargetActivityClassesVec, optio
 
 % Save results
 InputActivity = InputActivity(selectedFeatures, :);
-save('data/inputFuzzySystem', InputActivity, TargetActivityClassesVec);
+save('data/inputFuzzySystem', 'InputActivity', 'TargetActivityClassesVec');
 
 % Run feature selection and save the results
 function [selectedFeatures] = selectFeatures(Features, Target, options, fileName, nFeatures)
