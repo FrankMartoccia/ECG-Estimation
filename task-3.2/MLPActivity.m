@@ -6,15 +6,15 @@ clc
 load("data/afterFeaturesSelection.mat");
 
 % Network parameters
-hiddenSizes = 10;
+hiddenSizes = 10; 
 trainFcn = 'trainbr'; % Tested trainbr, trainlm and trainrp
 
 % Network creation
 net = patternnet(hiddenSizes, trainFcn);
-net.divideParam.trainRatio = 0.8; % It was set to 0.7 for trainlm and trainrp
+net.divideParam.trainRatio = 0.8;
 % trainbr doesn't need a validation set
 net.divideParam.valRatio = 0.0; % It was set to 0.1 for trainlm and trainrp
-net.divideParam.testRatio = 0.2;
+net.divideParam.testRatio = 0.2; % It was set to 0.1 for trainlm and trainrp
 net.performFcn = 'mse';
 % performFcn = 'crossentropy' (by default)
 
