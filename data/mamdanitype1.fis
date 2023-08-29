@@ -1,0 +1,54 @@
+[System]
+Name='mamdanitype1'
+Type='mamdani'
+Version=2.0
+NumInputs=3
+NumOutputs=1
+NumRules=9
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='input1'
+Range=[0 1]
+NumMFs=2
+MF1='mf1':'trapmf',[-10 -10 0.3 0.6]
+MF2='mf2':'trapmf',[0.3 0.6 10 10]
+
+[Input2]
+Name='input2'
+Range=[0 1]
+NumMFs=3
+MF1='mf1':'trapmf',[-10 -10 0.3 0.45]
+MF2='mf2':'trimf',[0.3 0.45 0.6]
+MF3='mf3':'trapmf',[0.45 0.6 10 10]
+
+[Input3]
+Name='input3'
+Range=[0 1]
+NumMFs=3
+MF1='mf1':'trimf',[0 0.5 1]
+MF2='mf2':'trimf',[0 0.5 1]
+MF3='mf3':'trimf',[-0.00179856115107913 0.498201438848921 0.998201438848921]
+
+[Output1]
+Name='output1'
+Range=[0 1]
+NumMFs=3
+MF1='mf1':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='mf2':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='mf3':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Rules]
+0 1 0, 1 (1) : 1
+0 1 0, 1 (1) : 1
+0 1 0, 1 (1) : 1
+0 2 0, 1 (1) : 1
+0 2 0, 1 (1) : 1
+0 2 0, 1 (1) : 1
+0 3 0, 1 (1) : 1
+0 3 0, 1 (1) : 1
+0 3 0, 1 (1) : 1
