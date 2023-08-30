@@ -5,9 +5,9 @@ load('data/inputFuzzySystem.mat');
 t = vec2ind(TargetActivityClassesVec);
 
 % Divide input in classes
-sit = InputActivity(:, t == 1);
-walk = InputActivity(:, t == 2);
-run = InputActivity(:, t == 3);
+run = InputActivity(:, t == 1);
+sit = InputActivity(:, t == 2);
+walk = InputActivity(:, t == 3);
 
 nFeatures = size(InputActivity, 1);
 nBins = 15;
@@ -24,13 +24,13 @@ sgtitle("Feature Distribution for All Activities");
 figure;
 for i = 1:nFeatures
     subplot(nFeatures, 3, 3 * (i - 1) + 1);
-    plotHistogram(sit(i, :), "SIT", i, nBins);
+    plotHistogram(run(i, :), "RUN", i, nBins);
     
     subplot(nFeatures, 3, 3 * (i - 1) + 2);
-    plotHistogram(walk(i, :), "WALK", i, nBins);
+    plotHistogram(sit(i, :), "SIT", i, nBins);
     
     subplot(nFeatures, 3, 3 * (i - 1) + 3);
-    plotHistogram(run(i, :), "RUN", i, nBins);
+    plotHistogram(walk(i, :), "WALK", i, nBins);
 end
 sgtitle("Feature Distribution by Activity");
 
