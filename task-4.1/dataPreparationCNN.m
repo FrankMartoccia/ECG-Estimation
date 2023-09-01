@@ -68,3 +68,5 @@ for measurement = 1 : N_MEASUREMENTS
         currentEndIdx = currentEndIdx + WINDOW_SIZE;
     end
 end
+
+save('data/inputCNN.mat', 'TimeseriesCNN', 'TargetCNN')
