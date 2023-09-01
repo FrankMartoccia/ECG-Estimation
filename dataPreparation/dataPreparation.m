@@ -47,7 +47,7 @@ for m = 1:length(FileList)
         if (max(isoutlier(TimeseriesMatrix)) == 1) 
             disp('Outlier detected')
         end
-        % Remove outliers
+        % Detect and replace outliers 
         TimeseriesMatrix = filloutliers(TimeseriesMatrix, 'linear');
 
         % Feature extraction (without window)
