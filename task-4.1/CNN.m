@@ -51,9 +51,9 @@ for combination = 1:length(hyperparameterCombinations)
         trainIdx = cv.training(fold);
         testIdx = cv.test(fold);
         
-        TrainData = cat(3, TimeseriesCNN{trainIdx});
+        TrainData = TimeseriesCNN(trainIdx);
         TrainTarget = TargetCNN(trainIdx);
-        TestData = cat(3, TimeseriesCNN{testIdx});
+        TestData = TimeseriesCNN(testIdx);
         TestTarget = TargetCNN(testIdx);
         
         options = trainingOptions('adam', ...
