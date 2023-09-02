@@ -2,31 +2,99 @@ clear; clc; close all;
 
 load('data/inputCNN.mat');
 
-% Definition of the CNN structure
+% Definition of values for hyperparameters
+nFilters = [8, 16, 32];
+filtersSize = [16, 32, 64];
+fclSize = [50, 100];
 
-nFilters = 8;
-FiltersSize = 16;
+hyperparameterCombinations = combvec(nFilters, filtersSize, fclSize)';
 
-layers = [
-    sequenceInputLayer(11)
+mseResults = zeros(length(hyperparameterCombinations), 1);
+
+numFolds = 5; 
+cv = cvpartition(length(TargetCNN), 'KFold', numFolds);
+
+% Loop on each combination of hyperparameters
+for combination = 1:length(hyperparameterCombinations)
+    hyperparams = hyperparameterCombinations(combination, :);
+
+    currentNFilters = hyperparams(1);
+    currentFiltersSize = hyperparams(2);
+    currentFclSize = hyperparams(3);
+
+    % Definition of the CNN structure
+    layers = [
+        sequenceInputLayer(11)
+        
+        convolution1dLayer(currentFiltersSize, currentNFilters, 'Stride', 2, 'Padding', 'same')
+        batchNormalizationLayer
+        reluLayer
+        maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
     
-    convolution1dLayer(FiltersSize, numFilters, 'Stride', 2, 'Padding', 'same')
-    batchNormalizationLayer
-    reluLayer
-    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
+        convolution1dLayer(currentFiltersSize / 2, 2 * currentNFilters, 'Stride', 2, 'Padding', 'same')
+        batchNormalizationLayer
+        reluLayer
+        maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
+    
+        globalAveragePooling1dLayer
+    
+        fullyConnectedLayer(currentFclSize)
+        fullyConnectedLayer(1)
+    
+        regressionLayer
+    ];
 
+    totalMSE = 0;
+                
+    % Cross-validation loop
+    for fold = 1:numFolds
+        trainIdx = cv.training(fold);
+        testIdx = cv.test(fold);
+        
+        TrainData = cat(3, TimeseriesCNN{trainIdx});
+        TrainTarget = TargetCNN(trainIdx);
+        TestData = cat(3, TimeseriesCNN{testIdx});
+        TestTarget = TargetCNN(testIdx);
+        
+        options = trainingOptions('adam', ...
+            MaxEpochs = 30, ...
+            MiniBatchSize = 80, ...
+            Shuffle = 'every-epoch' , ...
+            InitialLearnRate = 0.01, ...
+            LearnRateSchedule = 'piecewise', ...
+            LearnRateDropPeriod = 10, ...
+            LearnRateDropFactor = 0.1, ...
+            L2Regularization = 0.01, ...
+            ValidationData =  {TestData TestTarget}, ...
+            ValidationFrequency = 30, ...
+            ExecutionEnvironment = 'auto', ...
+            Plots = 'training-progress', ...
+            Verbose = 1, ...
+            VerboseFrequency = 1 ...
+            );
 
-    convolution1dLayer(FiltersSize / 2, 2 * numFilters, 'Stride', 2, 'Padding', 'same')
-    batchNormalizationLayer
-    reluLayer
-    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
+        net = trainNetwork(TrainData, TrainTarget, layers, options); 
 
-    globalAveragePooling1dLayer
+        y = predict(net, TestData);
+        mse = immse(y, TestTarget);
+        totalMSE = totalMSE + mse;
+    end
 
-    fullyConnectedLayer(50)
-    fullyConnectedLayer(1)
+    % Compute average MSE for this hyperparameter combination
+    avgMSE = totalMSE / numFolds;
+    mseResults(combination) = avgMSE;
+    
+    fprintf('nFilters=%d, filtersSize=%d, fclSize=%d - Average MSE: %.4f\n', ...
+        nFilters, filtersSize, fclSize, avgMSE);
+    
+end
 
-    regressionLayer
-];
-
-
+% Compare performance of different training functions
+combinationLabels = cellstr(num2str((1:length(hyperparameterCombinations))'));
+figure;
+bar(mseResults);
+xticks(1:length(hyperparameterCombinations));
+xticklabels(combinationLabels);
+xlabel('Combination ID');
+ylabel('Average MSE');
+title('Comparison of combinations of hyperparameters');
