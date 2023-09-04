@@ -6,7 +6,7 @@ clc
 load("data/afterFeaturesSelection.mat");
 
 % Network parameters
-hiddenSizes = 65;
+hiddenSizes = 60;
 
 % List of training functions to test
 
