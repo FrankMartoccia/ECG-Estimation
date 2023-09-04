@@ -3,7 +3,7 @@ clear; clc; close all;
 % CONSTANTS
 FOLDER_PATH = 'dataset';
 N_MEASUREMENTS = 66;
-WINDOW_SIZE = 5000;
+WINDOW_SIZE = 3000;
 
 Timeseries = cell(N_MEASUREMENTS, 1);
 Target = cell(N_MEASUREMENTS, 1);
@@ -23,7 +23,7 @@ for m = 1:length(FileList)
         disp(['Timeseries nr. ' num2str(timeseriesCounter)]);
         TimeseriesTable = readtable(fullfile(FOLDER_PATH, fileName), 'Range', 'B:L');
         TimeseriesMatrix = table2array(TimeseriesTable);
-
+        
         % Data normalization
         TimeseriesMatrix = normalize(TimeseriesMatrix', 'scale');
 
@@ -37,6 +37,7 @@ for m = 1:length(FileList)
     end
 end
 
+% Deleted noisy data (subject 13 walking activity)
 Timeseries(12) = [];
 Target(12) = [];
 

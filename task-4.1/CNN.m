@@ -2,7 +2,7 @@ clear; clc; close all;
 
 load('data/inputCNN.mat');
 
-nFilters = 64;
+nFilters = 32;
 filtersSize = 64;
 fclSize = 100;
 
@@ -10,31 +10,29 @@ fclSize = 100;
 layers = [
     sequenceInputLayer(11)
     
-    convolution1dLayer(15, nFilters, 'Stride', 2, 'Padding', 'same')
+    convolution1dLayer(filtersSize, nFilters, 'Stride', 2, 'Padding', 'same')
     batchNormalizationLayer
-    leakyReluLayer
-    maxPooling1dLayer(4, 'Stride', 4, 'Padding', 'same')
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
-    convolution1dLayer(11 , 2 * nFilters, 'Stride', 2, 'Padding', 'same')
+    convolution1dLayer(filtersSize/2, 2 * nFilters, 'Stride', 2, 'Padding', 'same')
     batchNormalizationLayer
-    leakyReluLayer
-    maxPooling1dLayer(4, 'Stride', 4, 'Padding', 'same')
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
-    convolution1dLayer(9 , 3 * nFilters, 'Stride', 2, 'Padding', 'same')
+    convolution1dLayer(filtersSize/4, 4 * nFilters, 'Stride', 2, 'Padding', 'same')
     batchNormalizationLayer
-    leakyReluLayer
-    maxPooling1dLayer(4, 'Stride', 4, 'Padding', 'same')
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
-    convolution1dLayer(9 , 4 * nFilters, 'Stride', 2, 'Padding', 'same')
+    convolution1dLayer(filtersSize/8, 8 * nFilters, 'Stride', 2, 'Padding', 'same')
     batchNormalizationLayer
-    leakyReluLayer
-    maxPooling1dLayer(4, 'Stride', 4, 'Padding', 'same')
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
     globalAveragePooling1dLayer
 
     fullyConnectedLayer(fclSize)
-    leakyReluLayer
-
     fullyConnectedLayer(1)
 
     regressionLayer
