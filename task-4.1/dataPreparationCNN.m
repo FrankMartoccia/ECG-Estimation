@@ -3,7 +3,7 @@ clear; clc; close all;
 % CONSTANTS
 FOLDER_PATH = 'dataset';
 N_MEASUREMENTS = 66;
-WINDOW_SIZE = 3000;
+WINDOW_SIZE = 5000;
 
 Timeseries = cell(N_MEASUREMENTS, 1);
 Target = cell(N_MEASUREMENTS, 1);
@@ -23,9 +23,7 @@ for m = 1:length(FileList)
         disp(['Timeseries nr. ' num2str(timeseriesCounter)]);
         TimeseriesTable = readtable(fullfile(FOLDER_PATH, fileName), 'Range', 'B:L');
         TimeseriesMatrix = table2array(TimeseriesTable);
-        
-        % Detect and replace outliers 
-        TimeseriesMatrix = filloutliers(TimeseriesMatrix, 'linear');
+
         % Data normalization
         TimeseriesMatrix = normalize(TimeseriesMatrix', 'scale');
 
@@ -64,7 +62,7 @@ for measurement = 1 : N_MEASUREMENTS - 1
 
     while currentEndIdx <= nSamples
         TimeseriesCNN{currentWindow} = Timeseries{measurement}(:, currentStartIdx : currentEndIdx);
-        TargetCNN(currentWindow) = mean(Target{measurement}(1, currentStartIdx : currentEndIdx));
+        TargetCNN(currentWindow) = std(Target{measurement}(1, currentStartIdx : currentEndIdx));
         currentWindow = currentWindow + 1;
         currentStartIdx = currentStartIdx + WINDOW_SIZE;
         currentEndIdx = currentEndIdx + WINDOW_SIZE;
