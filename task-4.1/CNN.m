@@ -2,99 +2,69 @@ clear; clc; close all;
 
 load('data/inputCNN.mat');
 
-% Definition of values for hyperparameters
-nFilters = [8, 16, 32];
-filtersSize = [16, 32, 64];
-fclSize = [50, 100];
+nFilters = 32;
+filtersSize = 64;
+fclSize = 100;
 
-hyperparameterCombinations = combvec(nFilters, filtersSize, fclSize)';
-
-mseResults = zeros(length(hyperparameterCombinations), 1);
-
-numFolds = 5; 
-cv = cvpartition(length(TargetCNN), 'KFold', numFolds);
-
-% Loop on each combination of hyperparameters
-for combination = 1:length(hyperparameterCombinations)
-    hyperparams = hyperparameterCombinations(combination, :);
-
-    currentNFilters = hyperparams(1);
-    currentFiltersSize = hyperparams(2);
-    currentFclSize = hyperparams(3);
-
-    % Definition of the CNN structure
-    layers = [
-        sequenceInputLayer(11)
-        
-        convolution1dLayer(currentFiltersSize, currentNFilters, 'Stride', 2, 'Padding', 'same')
-        batchNormalizationLayer
-        reluLayer
-        maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
+% Definition of the CNN structure
+layers = [
+    sequenceInputLayer(11)
     
-        convolution1dLayer(currentFiltersSize / 2, 2 * currentNFilters, 'Stride', 2, 'Padding', 'same')
-        batchNormalizationLayer
-        reluLayer
-        maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
-    
-        globalAveragePooling1dLayer
-    
-        fullyConnectedLayer(currentFclSize)
-        fullyConnectedLayer(1)
-    
-        regressionLayer
-    ];
+    convolution1dLayer(filtersSize, nFilters, 'Stride', 2, 'Padding', 'same')
+    batchNormalizationLayer
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
-    totalMSE = 0;
-                
-    % Cross-validation loop
-    for fold = 1:numFolds
-        trainIdx = cv.training(fold);
-        testIdx = cv.test(fold);
-        
-        TrainData = TimeseriesCNN(trainIdx);
-        TrainTarget = TargetCNN(trainIdx);
-        TestData = TimeseriesCNN(testIdx);
-        TestTarget = TargetCNN(testIdx);
-        
-        options = trainingOptions('adam', ...
-            MaxEpochs = 30, ...
-            MiniBatchSize = 80, ...
-            Shuffle = 'every-epoch' , ...
-            InitialLearnRate = 0.01, ...
-            LearnRateSchedule = 'piecewise', ...
-            LearnRateDropPeriod = 10, ...
-            LearnRateDropFactor = 0.1, ...
-            L2Regularization = 0.01, ...
-            ValidationData =  {TestData TestTarget}, ...
-            ValidationFrequency = 30, ...
-            ExecutionEnvironment = 'auto', ...
-            Plots = 'training-progress', ...
-            Verbose = 1, ...
-            VerboseFrequency = 1 ...
-            );
+    convolution1dLayer(filtersSize/2 , 2 * nFilters, 'Stride', 2, 'Padding', 'same')
+    batchNormalizationLayer
+    reluLayer
+    maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
 
-        net = trainNetwork(TrainData, TrainTarget, layers, options); 
+    globalAveragePooling1dLayer
 
-        y = predict(net, TestData);
-        mse = immse(y, TestTarget);
-        totalMSE = totalMSE + mse;
-    end
+    fullyConnectedLayer(fclSize)
+    fullyConnectedLayer(1)
 
-    % Compute average MSE for this hyperparameter combination
-    avgMSE = totalMSE / numFolds;
-    mseResults(combination) = avgMSE;
-    
-    fprintf('nFilters=%d, filtersSize=%d, fclSize=%d - Average MSE: %.4f\n', ...
-        nFilters, filtersSize, fclSize, avgMSE);
-    
-end
+    regressionLayer
+];
 
-% Compare performance of different training functions
-combinationLabels = cellstr(num2str((1:length(hyperparameterCombinations))'));
+% Creation of training and validation sets
+cv = cvpartition(length(TargetCNN), 'Holdout', 0.2);
+
+trainIdx = training(cv);
+validationIdx = test(cv);
+
+TrainData = TimeseriesCNN(trainIdx);
+TrainTarget = TargetCNN(trainIdx);
+ValidationData = TimeseriesCNN(validationIdx);
+ValidationTarget = TargetCNN(validationIdx);
+
+% Definition of training options
+options = trainingOptions('adam', ...
+    MaxEpochs = 30, ...
+    MiniBatchSize = 80, ...
+    Shuffle = 'every-epoch' , ...
+    InitialLearnRate = 0.01, ...
+    LearnRateSchedule = 'piecewise', ...
+    LearnRateDropPeriod = 10, ...
+    LearnRateDropFactor = 0.1, ...
+    L2Regularization = 0.01, ...
+    ValidationData =  {ValidationData ValidationTarget}, ...
+    ValidationFrequency = 30, ...
+    ExecutionEnvironment = 'auto', ...
+    Plots = 'training-progress', ...
+    Verbose = 1, ...
+    VerboseFrequency = 1 ...
+);
+
+net = trainNetwork(TrainData, TrainTarget, layers, options); 
+
+% Test against validation set
+yTest = predict(net, ValidationData, ExecutionEnvironment ='auto', MiniBatchSize = 100);
+figure; 
+plotregression(ValidationTarget, yTest);
+
+% Test against training set
+yTrain = predict(net, TrainData, ExecutionEnvironment ='auto', MiniBatchSize = 100);
 figure;
-bar(mseResults);
-xticks(1:length(hyperparameterCombinations));
-xticklabels(combinationLabels);
-xlabel('Combination ID');
-ylabel('Average MSE');
-title('Comparison of combinations of hyperparameters');
+plotregression(TrainTarget, yTrain); 

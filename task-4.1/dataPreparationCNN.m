@@ -17,7 +17,7 @@ targetCounter = 0;
 % by scanning the files in the dataset folder
 for m = 1:length(FileList)
     fileName = FileList(m).name;
-    
+    disp(fileName)
     if (contains(fileName, 'timeseries'))
         timeseriesCounter = timeseriesCounter + 1;
         disp(['Timeseries nr. ' num2str(timeseriesCounter)]);
@@ -39,11 +39,13 @@ for m = 1:length(FileList)
     end
 end
 
+Timeseries(12) = [];
+Target(12) = [];
 
 nWindows = 0;
 
 % Computation of the total number of windows
-for i = 1 : N_MEASUREMENTS
+for i = 1 : N_MEASUREMENTS - 1
     nSamples = length(Timeseries{i});
     nWindows = nWindows + floor(nSamples / WINDOW_SIZE);
 end
@@ -55,7 +57,7 @@ TargetCNN = zeros(nWindows, 1);
 currentWindow = 1;
 
 % TimeseriesCNN and TargetCNN are filled with samples in windows of width equal to WINDOW_SIZE
-for measurement = 1 : N_MEASUREMENTS
+for measurement = 1 : N_MEASUREMENTS - 1
     nSamples = size(Timeseries{measurement}, 2);
     currentStartIdx = 1;
     currentEndIdx = WINDOW_SIZE;
@@ -68,5 +70,10 @@ for measurement = 1 : N_MEASUREMENTS
         currentEndIdx = currentEndIdx + WINDOW_SIZE;
     end
 end
+
+% Outliers removal
+[TargetCNN, to_remove] = rmoutliers(TargetCNN);
+TimeseriesCNN = TimeseriesCNN(~to_remove);
+fprintf("Removed %i outliers \n", sum(to_remove));
 
 save('data/inputCNN.mat', 'TimeseriesCNN', 'TargetCNN')
