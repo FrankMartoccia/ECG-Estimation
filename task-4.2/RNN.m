@@ -23,15 +23,26 @@ for startIdx = 1:(length(InputRNN) - WINDOW_SIZE)
 end
 
 % Creation of training and validation sets
-cv = cvpartition(length(TargetRNN), 'Holdout', 0.2);
+% cv = cvpartition(length(TargetRNN), 'Holdout', 0.2);
 
-trainIdx = training(cv);
-validationIdx = test(cv);
+% trainIdx = training(cv);
+% validationIdx = test(cv);
+
+% TrainData = InputWindow(trainIdx);
+% TrainTarget = TargetRNN(trainIdx);
+% ValidationData = InputWindow(validationIdx);
+% ValidationTarget = TargetRNN(validationIdx);
+
+nMeasurements = size(InputWindow, 1);
+
+trainIdx = 1:floor(0.8 * nMeasurements);
+validationIdx = floor(0.8 * nMeasurements) + 1 :nMeasurements;
 
 TrainData = InputWindow(trainIdx);
-TrainTarget = TargetRNN(trainIdx);
 ValidationData = InputWindow(validationIdx);
+TrainTarget = TargetRNN(trainIdx);
 ValidationTarget = TargetRNN(validationIdx);
+
 
 % Definition of training options
 options = trainingOptions('adam', ...
@@ -63,18 +74,11 @@ net = trainNetwork(TrainData, TrainTarget, layers, options);
 
 net = resetState(net);
 
-yTest = predict(net, ValidationData, ExecutionEnvironment ='auto', MiniBatchSize = 100);
+yTest = predict(net, ValidationData, ExecutionEnvironment ='auto');
 
+% Plot of predicted vs correct values of ECG
 figure;
 plot(yTest(1:100),'--');
 hold on;
 plot(ValidationTarget(1:100));
 hold off;
-
-%% Compute and analyze error
-% To evaluate the accuracy, calculate the root mean squared error (RMSE) 
-% between the predictions and the target.
-rmse = sqrt(mse(yTest, ValidationTarget));
-
-% Calculate the mean RMSE over all test observations.
-fprintf("RMSE on validation set: %f\n", rmse);
