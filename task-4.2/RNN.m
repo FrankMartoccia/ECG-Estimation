@@ -1,7 +1,7 @@
 clear; clc; close all;
 
 % Constants
-WINDOW_SIZE = 20;
+WINDOW_SIZE = 40;
 
 load('data/inputRNN.mat');
 
@@ -78,7 +78,7 @@ yTest = predict(net, ValidationData, ExecutionEnvironment ='auto');
 
 % Plot of predicted vs correct values of ECG
 figure;
-plot(yTest(1:200),'--');
+plot(yTest(1:150),'--');
 hold on;
-plot(ValidationTarget(1:200));
+plot(ValidationTarget(1:150));
 hold off;
