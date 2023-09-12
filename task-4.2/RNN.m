@@ -28,21 +28,16 @@ cv = cvpartition(length(TargetRNN), 'Holdout', 0.2);
 trainIdx = training(cv);
 validationIdx = test(cv);
 
+% Alternative partitioning method
+
+% nMeasurements = size(InputWindow, 1);
+% trainIdx = 1: floor(0.8 * nMeasurements);
+% validationIdx = floor(0.8 * nMeasurements) + 1 :nMeasurements;
+
 TrainData = InputWindow(trainIdx);
 TrainTarget = TargetRNN(trainIdx);
 ValidationData = InputWindow(validationIdx);
 ValidationTarget = TargetRNN(validationIdx);
-
-% nMeasurements = size(InputWindow, 1);
-
-% trainIdx = 1: floor(0.8 * nMeasurements);
-% validationIdx = floor(0.8 * nMeasurements) + 1 :nMeasurements;
-
-% TrainData = InputWindow(trainIdx);
-% ValidationData = InputWindow(validationIdx);
-% TrainTarget = TargetRNN(trainIdx);
-% ValidationTarget = TargetRNN(validationIdx);
-
 
 % Definition of training options
 options = trainingOptions('adam', ...
