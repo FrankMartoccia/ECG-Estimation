@@ -23,41 +23,41 @@ for startIdx = 1:(length(InputRNN) - WINDOW_SIZE)
 end
 
 % Creation of training and validation sets
-% cv = cvpartition(length(TargetRNN), 'Holdout', 0.2);
+cv = cvpartition(length(TargetRNN), 'Holdout', 0.2);
 
-% trainIdx = training(cv);
-% validationIdx = test(cv);
-
-% TrainData = InputWindow(trainIdx);
-% TrainTarget = TargetRNN(trainIdx);
-% ValidationData = InputWindow(validationIdx);
-% ValidationTarget = TargetRNN(validationIdx);
-
-nMeasurements = size(InputWindow, 1);
-
-trainIdx = 1:floor(0.8 * nMeasurements);
-validationIdx = floor(0.8 * nMeasurements) + 1 :nMeasurements;
+trainIdx = training(cv);
+validationIdx = test(cv);
 
 TrainData = InputWindow(trainIdx);
-ValidationData = InputWindow(validationIdx);
 TrainTarget = TargetRNN(trainIdx);
+ValidationData = InputWindow(validationIdx);
 ValidationTarget = TargetRNN(validationIdx);
+
+% nMeasurements = size(InputWindow, 1);
+
+% trainIdx = 1: floor(0.8 * nMeasurements);
+% validationIdx = floor(0.8 * nMeasurements) + 1 :nMeasurements;
+
+% TrainData = InputWindow(trainIdx);
+% ValidationData = InputWindow(validationIdx);
+% TrainTarget = TargetRNN(trainIdx);
+% ValidationTarget = TargetRNN(validationIdx);
 
 
 % Definition of training options
 options = trainingOptions('adam', ...
-    MaxEpochs = 15, ...
+    MaxEpochs = 10, ...
     MiniBatchSize = 1500, ...
     Shuffle = 'every-epoch' , ...
     InitialLearnRate = 0.01, ...
     LearnRateSchedule = 'piecewise', ...
     LearnRateDropPeriod = 10, ...
     LearnRateDropFactor = 0.1, ...
-    L2Regularization = 0.01, ...
     ValidationData =  {ValidationData ValidationTarget}, ...
     ValidationFrequency = 30, ...
     ExecutionEnvironment = 'auto', ...
     Plots = 'training-progress', ...
+    SequencePaddingDirection = 'left', ...
     Verbose = 1, ...
     VerboseFrequency = 1 ...
 );
@@ -78,7 +78,7 @@ yTest = predict(net, ValidationData, ExecutionEnvironment ='auto');
 
 % Plot of predicted vs correct values of ECG
 figure;
-plot(yTest(1:100),'--');
+plot(yTest(1:200),'--');
 hold on;
-plot(ValidationTarget(1:100));
+plot(ValidationTarget(1:200));
 hold off;
