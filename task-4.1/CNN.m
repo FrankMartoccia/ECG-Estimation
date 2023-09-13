@@ -29,6 +29,7 @@ layers = [
     batchNormalizationLayer
     reluLayer
     maxPooling1dLayer(2, 'Stride', 2, 'Padding', 'same')
+    
     globalAveragePooling1dLayer
 
     fullyConnectedLayer(fclSize)
