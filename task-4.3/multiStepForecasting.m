@@ -3,7 +3,7 @@ clear; clc; close all;
 load('data/inputMultiStepRNN', 'net', 'ValidationData', 'PrevisionTarget');
 
 % Initialize a matrix to store RMSE for each test sequence
-RmseMatrix = nan(length(ValidationData), length(PrevisionTarget{1}));
+RmseMatrix = nan(length(ValidationData), 1);
 
 % Initialize a cell array to store predicted values for each sequence
 PredictedValuesCell = cell(length(ValidationData), 1);
@@ -32,8 +32,8 @@ for windowIdx = 1:length(ValidationData)
     PredictedValuesCell{windowIdx} = PredictedValues;
 
     % Calculate the RMSE for this sequence
-    rmse = sqrt(mean((PredictedValues - TrueTargets).^2));
-    RmseMatrix(windowIdx, :) = rmse;
+    error = (PredictedValues - TrueTargets);
+    RmseMatrix(windowIdx) = sqrt(mean(error.^2));
 
     % Display progress every 500 sequences
     if mod(windowIdx, 500) == 0
@@ -43,7 +43,7 @@ for windowIdx = 1:length(ValidationData)
 end
 
 % Calculate the overall RMSE
-overallRMSE = sqrt(mean(RmseMatrix(:).^2));
+overallRMSE = mean(RmseMatrix(:));
 fprintf('Overall RMSE: %.4f\n', overallRMSE);
 
 % Plot RMSE for each sequence
