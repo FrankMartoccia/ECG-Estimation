@@ -7,8 +7,8 @@ load("data/afterFeaturesSelection.mat");
 
 % Euclidean distance between pairs of observations
 D = pdist(InputStdECG');
-fprintf('Min distance: %f\n', min(D));
-fprintf('Max distance: %f\n', max(D));
+fprintf('Min distance: %f\n', min(D)); % 0.045827
+fprintf('Max distance: %f\n', max(D)); % 1.712814
 
 % Parameters initialization
 P = InputStdECG;
