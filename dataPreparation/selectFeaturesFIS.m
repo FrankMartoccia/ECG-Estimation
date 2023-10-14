@@ -6,7 +6,7 @@ clc
 load('data/afterFeaturesSelection.mat')
 
 % Feature selection options
-options = statset('Display', 'iter','UseParallel',true);
+options = statset('Display', 'iter', 'UseParallel',true);
 
 % Running features selection to determine top 3 features for Fuzzy System
 selectedFeatures = selectFeatures(InputActivity, TargetActivityClassesVec, options, 'Activity', 3);
