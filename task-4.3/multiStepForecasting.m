@@ -13,16 +13,18 @@ for windowIdx = 1:length(ValidationData)
 
     TrueTargets = PrevisionTarget{windowIdx};
 
+    % Initialize an array to store predicted values
+    PredictedValues = nan(size(TrueTargets));
+
     % Reset the network state
     net = resetState(net);
 
     [net, Y] = predictAndUpdateState(net, ValidationData{windowIdx});
 
-    % Initialize an array to store predicted values
-    PredictedValues = nan(size(TrueTargets));
+    PredictedValues(1) = Y;
 
     % Perform closed-loop forecasting
-    for t = 1:length(TrueTargets)
+    for t = 2:length(TrueTargets)
         % Predict the next value and update the network state
         [net, Y] = predictAndUpdateState(net, Y);
         PredictedValues(t) = Y;

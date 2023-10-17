@@ -4,7 +4,7 @@ load('data/inputCNN.mat');
 
 nFilters = 32;
 filtersSize = 64;
-fclSize = 100;
+fclSize = 50;
 
 % Definition of the CNN structure
 layers = [
