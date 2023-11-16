@@ -8,6 +8,7 @@ InputRNN = cell(N_MEASUREMENTS, 1);
 
 FileList = dir(fullfile(FOLDER_PATH, '*targets.csv'));
 
+% ECG values are taken from each target file and saved in a matrix
 for m = 1:length(FileList)
     fileName = FileList(m).name;
     disp(fileName)
